@@ -34,7 +34,7 @@ exports.getData = (table, filter, sort, callback) => {
       if (sort) {
         RethinkDB.table(table).filter(filter).orderBy(sort).run(conn, callback);
       } else {
-        RethinkDB.db('chattingtatum').table(table).filter(filter).run(conn, callback);
+        RethinkDB.table(table).filter(filter).run(conn, callback);
       }
     } else if (sort) {
       RethinkDB.table(table).orderBy(sort).run(conn, callback);

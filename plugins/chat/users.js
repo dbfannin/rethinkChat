@@ -8,7 +8,7 @@ var rethink = require('./rethinkdb.js');
 
 exports.loginUser = (request, reply) => {
   var data = {
-    loginID: request.payload.login,
+    loginID: request.payload.username,
     password: request.payload.password
   };
 
@@ -25,7 +25,8 @@ exports.loginUser = (request, reply) => {
       if (err)
         console.log(err);
       user = {
-        login: row.login
+        username: row.loginID,
+        id: row.id
       };
     }, () => {
       return reply(user);
