@@ -42,7 +42,8 @@ module.exports.register = (plugin, options, next) => {
     method: 'POST',
     path: '/user/login',
     config: {
-      handler: users.loginUser
+      handler: users.loginUser,
+      cors: true
     }
   });
 

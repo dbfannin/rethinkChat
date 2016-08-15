@@ -1,10 +1,10 @@
 'use strict';
 const Glue = require('glue');
-var path = require('path');
-var fs = require('fs');
+const path = require('path');
+const fs = require('fs');
 
 
-var nconf = require('nconf');
+const nconf = require('nconf');
 
 require(path.join(__dirname, 'server/config/nconf')).init(nconf, path.join(__dirname, 'properties.json'));
 
@@ -16,15 +16,6 @@ process.maxTickDepth = nconf.get('max-tick-depth') || 400;
 process.on('uncaughtException', function (err) {
   console.log('Uncaught exception: ', JSON.stringify(err.stack));
   throw err;
-});
-
-
-process.on('SIGTERM', function(){
-  server.close();
-});
-
-process.on('exit', function(){
-  server.close();
 });
 
 
@@ -40,6 +31,15 @@ Glue.compose(require('./manifest.js'), options, function(err, server){
   if(err) {
     throw err;
   }
+
+
+  process.on('SIGTERM', function(){
+    server.close();
+  });
+
+  process.on('exit', function(){
+    server.close();
+  });
 
   require('./server/config/routes').init(server);
 

@@ -5,7 +5,6 @@ const _ = require('lodash');
 var rethink = require('./rethinkdb.js');
 
 
-
 exports.loginUser = (request, reply) => {
   var data = {
     loginID: request.payload.username,
@@ -13,10 +12,12 @@ exports.loginUser = (request, reply) => {
   };
 
   rethink.getData('CSR', data, null, function (err, cursor) {
-    if (err) { 
-     return reply({errors: ['an error occurred while trying to find user']});
+    if (err) {
+      console.error(err);
+      return reply({errors: ['an error occurred while trying to find user']});
     }
     else if (!cursor) {
+      console.error('user ' + data.loginID + ' not found');
       return reply({errors: ['User not found']});
     }
 
