@@ -20,17 +20,34 @@ module.exports.register = (plugin, options, next) => {
     method: 'POST',
     path: '/message/create',
     config: {
-        plugins: {
-          'hapi-io': {
-            event: 'create_message',
-            post: messages.createMessage
-          }
-        },
-        handler: (request, reply) => {
-          //console.log("Create Message");
-          reply();
+      plugins: {
+        'hapi-io': {
+          event: 'create_message',
+          post: messages.createMessage
         }
+      },
+      handler: (request, reply) => {
+        //console.log("Create Message");
+        reply();
       }
+    }
+  });
+
+  plugin.route({
+    method: 'GET',
+    path: '/message/queue',
+    config: {
+      plugins: {
+        'hapi-io': {
+          event: 'GET_QUEUE',
+          get: messages.getQueue
+        }
+      },
+      handler: (request, reply) => {
+        //console.log("Create Message");
+        reply();
+      }
+    }
   });
 
 
@@ -47,7 +64,16 @@ module.exports.register = (plugin, options, next) => {
     }
   });
 
-
+  plugin.route({
+    method: 'GET',
+    path: '/test',
+    config: {
+      handler: function(request, reply) {
+        reply('success')
+      },
+      cors: true
+    }
+  });
 
   next();
 };

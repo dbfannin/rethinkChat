@@ -17,6 +17,8 @@ process.on('uncaughtException', function (err) {
   console.log('Uncaught exception: ', JSON.stringify(err.stack));
   throw err;
 });
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 
 
 console.log('booting application on ' + process.pid.toString());

@@ -13,6 +13,7 @@ exports.init = function (nconf, serverPropertiesFN) {
 
   nconf.defaults({
     "port": "3003",
+    "https-port": "3005",
     "host": "localhost",
     "rethinkDB-host": 'localhost',
     "rethinkDB-port": 28015,
