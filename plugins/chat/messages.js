@@ -2,13 +2,13 @@
 
 var rethink = require('./rethinkdb.js');
 
-exports.createMessage = function (ctx, next) {
+exports.createMessage = function (request, next) {
 
   var writeMessage = function () {
     var data = {
-      author: ctx.data.author,
-      message: ctx.data.message,
-      room: ctx.data.room,
+      author: request.data.author,
+      message: request.data.message,
+      room: request.data.room,
       time: rethink.now()
     };
 
@@ -18,7 +18,7 @@ exports.createMessage = function (ctx, next) {
     });
   };
 
-  if (ctx.data.dialogueId) {
+  if (request.data.dialogueId) {
     writeMessage();
   } else {
     let dialogueData = {};
@@ -32,30 +32,27 @@ exports.createMessage = function (ctx, next) {
   next();
 };
 
-exports.getQueue = function(ctx, reply) {
+exports.getQueue = function (request, reply) {
   var filter = {
     csrId: "",
-    active: 1
+    //active: 1
   };
   var sort = "createdDate";
-  rethink.getData('Dialog', filter, sort, function (err, cursor) {
+  rethink.getData('Dialogue', filter, sort, function (err, cursor) {
     if (err) {
       console.error(err);
       return reply({errors: ['an error occurred while trying to find dialogs']});
     }
     else if (!cursor) {
-      return reply({dialogs: []});
     }
 
-    var dialogs = [];
-    cursor.each(function (err, row) {
-      if (err) {
-        console.log(err);
+    cursor.toArray().then((results) => {
+      if (!results.length) {
+        return reply({dialogs: []});
       }
-      dialogs.push(row);
 
-    }, () => ctx.socket.emit("INIT_QUEUE", {dialogs:dialogs})
-    );
+      reply({dialogs: results});
+    });
 
   });
 };

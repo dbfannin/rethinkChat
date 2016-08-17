@@ -21,18 +21,20 @@ exports.loginUser = (request, reply) => {
       return reply({errors: ['User not found']});
     }
 
-    var user;
-    cursor.each(function (err, row) {
-      if (err)
-        console.log(err);
-      user = {
-        username: row.loginID,
-        id: row.id
-      };
-    }, () => {
-      return reply(user);
-    });
+    cursor.toArray().then((results) => {
+      if (err) {
+        return console.log(err);
+      } else if(!results.length) {
+        console.error('user ' + data.loginID + ' not found');
+        return reply({errors: ['User not found']});
+      }
 
+
+      reply({
+        username: results[0].loginID,
+        id: results[0].id
+      });
+    });
   });
 }
 ;

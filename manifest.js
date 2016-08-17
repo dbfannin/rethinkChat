@@ -6,12 +6,12 @@ const fs = require('fs');
 const httpsConfig = {
   port: 3000,
   key: fs.readFileSync('resources/key.pem'),
-  cert: fs.readFileSync('resources/cert.pem')
+  cert: fs.readFileSync('resources/cert.pem'),
+  ca:fs.readFileSync('resources/ca-cert.pem')
 };
 
 var manifest = {
   connections: [
-/*
     {
       port: nconf.get('port'),
       routes: {
@@ -20,19 +20,8 @@ var manifest = {
         },
         security: {
           xframe: true
-        }
-      }
-    },
-*/
-    {
-      port: nconf.get('https-port'),
-      routes: {
-        files: {
-          relativeTo: path.join(__dirname, 'server')
         },
-        security: {
-          xframe: true
-        }
+        cors: true
       },
       tls: {
         key: httpsConfig.key,
@@ -44,7 +33,11 @@ var manifest = {
     {plugin: {
       register: 'hapi-io',
       options: {
-        socketio: {key:httpsConfig.key,cert:httpsConfig.cert}
+        socketio: {
+          key:httpsConfig.key,
+          cert:httpsConfig.cert,
+          ca: httpsConfig.ca
+        }
       }
     }},
     {

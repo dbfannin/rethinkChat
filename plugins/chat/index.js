@@ -38,16 +38,10 @@ module.exports.register = (plugin, options, next) => {
     path: '/message/queue',
     config: {
       plugins: {
-        'hapi-io': {
-          event: 'GET_QUEUE',
-          get: messages.getQueue
+        'hapi-io': 'GET_QUEUE'
         }
       },
-      handler: (request, reply) => {
-        //console.log("Create Message");
-        reply();
-      }
-    }
+      handler: messages.getQueue
   });
 
 
@@ -59,21 +53,19 @@ module.exports.register = (plugin, options, next) => {
     method: 'POST',
     path: '/user/login',
     config: {
-      handler: users.loginUser,
-      cors: true
+      handler: users.loginUser
     }
   });
-
   plugin.route({
     method: 'GET',
     path: '/test',
     config: {
       handler: function(request, reply) {
         reply('success')
-      },
-      cors: true
+      }
     }
   });
+
 
   next();
 };
