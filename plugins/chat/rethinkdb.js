@@ -8,14 +8,14 @@ const connectToDB = function (callback) {
   RethinkDB.connect(internals, callback);
 };
 
-exports.init = function(options) {
+exports.init = function (options) {
   internals = options;
   console.log('RethinkDB properties', JSON.stringify(internals));
 };
 
 exports.subscribeToChanges = (table, options, callback) => {
   connectToDB(function (err, conn) {
-    //RethinkDB.table(table).changes(options).run(conn, callback);
+    RethinkDB.table(table).changes(options).run(conn, callback);
   });
 };
 
@@ -44,9 +44,28 @@ exports.getData = (table, filter, sort, callback) => {
   });
 };
 
+exports.eqJoin = (rTable, lTable, lTableIdKey, without, filter, sort, callback) => {
+  connectToDB(function (err, conn) {
+
+    if (filter) {
+      if (sort) {
+        RethinkDB.table(rTable).eqJoin(lTableIdKey, RethinkDB.table(lTable)).filter(filter).without(without).orderBy(sort).zip().run(conn, callback)
+      } else {
+        RethinkDB.table(rTable).eqJoin(lTableIdKey, RethinkDB.table(lTable)).filter(filter).without(without).zip().run(conn, callback)
+      }
+    } else if (sort) {
+      RethinkDB.table(rTable).eqJoin(lTableIdKey, RethinkDB.table(lTable)).without(without).orderBy(sort).zip().run(conn, callback)
+    } else {
+      RethinkDB.table(rTable).eqJoin(lTableIdKey, RethinkDB.table(lTable)).without(without).zip().run(conn, callback)
+    }
+
+  });
+
+};
+
 exports.update = (table, id, data, callback) => {
   connectToDB(function (err, conn) {
-      RethinkDB.table(table).get(id).update(data).run(conn, callback);
+    RethinkDB.table(table).get(id).update(data).run(conn, callback);
   });
 };
 

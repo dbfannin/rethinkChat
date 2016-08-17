@@ -21,16 +21,10 @@ module.exports.register = (plugin, options, next) => {
     path: '/message/create',
     config: {
       plugins: {
-        'hapi-io': {
-          event: 'create_message',
-          post: messages.createMessage
+        'hapi-io': 'SEND_MESSAGE'
         }
       },
-      handler: (request, reply) => {
-        //console.log("Create Message");
-        reply();
-      }
-    }
+      handler: messages.sendMessage
   });
 
   plugin.route({
@@ -42,6 +36,39 @@ module.exports.register = (plugin, options, next) => {
         }
       },
       handler: messages.getQueue
+  });
+
+  plugin.route({
+    method: 'POST',
+    path: '/dialogs/close',
+    config: {
+      plugins: {
+        'hapi-io': 'CLOSE_DIALOG'
+        }
+      },
+      handler: messages.closeDialog
+  });
+
+  plugin.route({
+    method: 'POST',
+    path: '/message/dialogs',
+    config: {
+      plugins: {
+        'hapi-io': 'GET_ACTIVE_DIALOGS'
+        }
+      },
+      handler: messages.getActiveDialogs
+  });
+
+  plugin.route({
+    method: 'POST',
+    path: '/message/queue/pop',
+    config: {
+      plugins: {
+        'hapi-io': 'POP_QUEUE'
+        }
+      },
+      handler: messages.popQueue
   });
 
 

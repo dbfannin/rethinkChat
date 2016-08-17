@@ -5,32 +5,29 @@ var rethink = require('./rethinkdb.js');
 exports.init = (io) => {
   exports.io = io;
 
-  rethink.subscribeToChanges('Dialog', {includeInitial: false}, function (err, cursor) {
+  rethink.subscribeToChanges('Dialogue', {includeInitial: false}, function (err, cursor) {
     if (err) {
       return console.log(err);
     }
+
+    console.log('Dialogue table updated');
     cursor.each((err, row) => {
       if (err) {
         return console.log(err);
       }
-      io.sockets.emit("DIALOG_UPDATED", row)
+      io.sockets.emit("DIALOG_UPDATED", row.new_val)
     });
   });
 
-  /*rethink.subscribeToChanges('message', {includeInitial: false}, function (err, cursor) {
-   if (err)
-   console.log(err);
-   else
-   cursor.each(function (err, row) {
-   if (err)
-   console.log(err);
+  rethink.subscribeToChanges('MessagesDialogue', {includeInitial: false}, function (err, cursor) {
+    if (err) return console.log(err);
 
-   io.sockets.to(row['new_val']['room']).emit("add_message", {
-   message: row['new_val']['message'],
-   author: row['new_val']['author'],
-   time: row['new_val']['time']
-   })
-   });
-   });*/
+
+    cursor.each(function (err, row) {
+      if (err) return console.log(err);
+
+      io.sockets.emit("DIALOGUE:" + row.new_val.dialogueId, row.new_val);
+    });
+  });
 };
 
