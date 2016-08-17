@@ -15,7 +15,12 @@ exports.init = (io) => {
       if (err) {
         return console.log(err);
       }
-      io.sockets.emit("DIALOG_UPDATED", row.new_val)
+
+      if(row.old_val && row.old_val.active && !row.new_val.active) {
+        io.sockets.emit("DIALOG_CLOSED", row.new_val)
+      } else {
+        io.sockets.emit("DIALOG_UPDATED", row.new_val)
+      }
     });
   });
 
