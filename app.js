@@ -35,6 +35,14 @@ Glue.compose(require('./manifest.js'), options, function(err, server){
   }
 
 
+  server.route({
+    method: 'GET',
+    path: '/',
+    handler: function(request, reply) {
+      reply('SUCCESS');
+    }
+  });
+
   process.on('SIGTERM', function(){
     server.close();
   });
