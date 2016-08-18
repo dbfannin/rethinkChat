@@ -34,7 +34,25 @@ exports.sendMessage = (request, reply) => {
     };
 
     rethink.writeToTable(MESSAGES_TABLE, data, (err, result) => {
-      reply(result);
+
+
+
+      var filter = {
+        dialogueId: dialogId
+      };
+
+      if(!request.payload.dialogId){
+        rethink.getData(MESSAGES_TABLE, filter, null, (err, cursor) => {
+          if (err) {
+            console.error(err);
+          }
+
+          cursor.toArray().then(results => reply({dialogueId: dialogId, message: results[0]}));
+        });
+      } else {
+        reply();
+      }
+
     });
   };
 
@@ -88,7 +106,7 @@ var getAllMessages = (dialogId, callback) => {
 };
 exports.popQueue = (request, reply) => {
 
-  //get the first dialog without
+  //get the first dialog without CSR ID
   //update the dialogue table
   //return allMessages
 
